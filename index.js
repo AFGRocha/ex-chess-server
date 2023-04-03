@@ -42,9 +42,8 @@ io.on('connection', (socket) => {
   socket.on('disconnect', () => {
     console.log(`A user has disconnected ${socket.id}`);
   })
-  socket.on('piece-movement', (oldPosition, newPosition, roomId) => {
-    console.log('looptest')
-    io.sockets.in("room-"+roomId).emit('piece-movement', oldPosition, newPosition)
+  socket.on('piece-movement', (oldPosition, newPosition, roomId, player) => {
+    io.sockets.in("room-"+roomId).emit('piece-movement', oldPosition, newPosition, player)
   })
 });
 
