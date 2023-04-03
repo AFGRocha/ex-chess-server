@@ -32,9 +32,18 @@ const io = new Server(server, {
 });
 
 io.on('connection', (socket) => {
+  const roomId = uuidV4()
   console.log(`User connected ${socket.id}`);
-  socket.on('join-room', (roomId, userId) => {
-    console.log(roomId, userId);
+  socket.on('join-room', (id, userId) => {
+    console.log(id, userId);
+    io.emit('connected', roomId)
+  })
+  socket.on('disconnect', () => {
+    console.log(`A user has disconnected ${socket.id}`);
+  })
+  socket.on('piece-movement', (oldPosition, newPosition) => {
+    console.log('looptest')
+    io.emit('piece-movement', oldPosition, newPosition)
   })
 });
 
