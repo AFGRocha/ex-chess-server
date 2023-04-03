@@ -36,14 +36,15 @@ io.on('connection', (socket) => {
   console.log(`User connected ${socket.id}`);
   socket.on('join-room', (id, userId) => {
     console.log(id, userId);
-    io.emit('connected', roomId)
+    socket.join("room-"+id);
+    io.sockets.in("room-"+id).emit('connected', id);
   })
   socket.on('disconnect', () => {
     console.log(`A user has disconnected ${socket.id}`);
   })
-  socket.on('piece-movement', (oldPosition, newPosition) => {
+  socket.on('piece-movement', (oldPosition, newPosition, roomId) => {
     console.log('looptest')
-    io.emit('piece-movement', oldPosition, newPosition)
+    io.sockets.in("room-"+roomId).emit('piece-movement', oldPosition, newPosition)
   })
 });
 
