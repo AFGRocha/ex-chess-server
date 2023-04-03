@@ -43,7 +43,7 @@ io.on('connection', (socket) => {
     console.log(`A user has disconnected ${socket.id}`);
   })
   socket.on('piece-movement', (oldPosition, newPosition, roomId, player) => {
-    io.sockets.in("room-"+roomId).emit('piece-movement', oldPosition, newPosition, player)
+    io.sockets.in("room-"+roomId).emit('piece-movement-server', oldPosition, newPosition, player)
   })
 });
 
