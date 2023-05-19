@@ -23,7 +23,7 @@ app.get('/:room', (req, res) => {
   res.send(`Room ID: ${req.params.room}`)
 })
 
-
+let userIds = []
 const io = new Server(server, {
   cors: {
     origin: 'http://localhost:3000',
@@ -32,18 +32,23 @@ const io = new Server(server, {
 });
 
 io.on('connection', (socket) => {
-  const roomId = uuidV4()
   console.log(`User connected ${socket.id}`);
   socket.on('join-room', (id, userId) => {
-    console.log(id, userId);
+    userIds.push(socket.id)
     socket.join("room-"+id);
-    io.sockets.in("room-"+id).emit('connected', id);
+    io.sockets.in("room-"+id).emit('connected', id, socket.id);
   })
   socket.on('disconnect', () => {
     console.log(`A user has disconnected ${socket.id}`);
   })
   socket.on('piece-movement', (oldPosition, newPosition, roomId, player) => {
+    console.log(player)
+    let index  = ((player === 'player1') ? 1 : 0);
+    console.log(player+' is sending to  ' + userIds[index])
     io.sockets.in("room-"+roomId).emit('piece-movement-server', oldPosition, newPosition, player)
+  })
+  socket.on('ex-press', (roomId, player, isOn) => {
+    io.sockets.in("room-"+roomId).emit('ex-press-server', isOn, player)
   })
 });
 
