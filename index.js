@@ -41,14 +41,18 @@ io.on('connection', (socket) => {
   socket.on('disconnect', () => {
     console.log(`A user has disconnected ${socket.id}`);
   })
-  socket.on('piece-movement', (oldPosition, newPosition, roomId, player) => {
+  socket.on('piece-movement', (oldPosition, newPosition, roomId, player, isEx) => {
     console.log(player)
     let index  = ((player === 'player1') ? 1 : 0);
     console.log(player+' is sending to  ' + userIds[index])
-    io.sockets.in("room-"+roomId).emit('piece-movement-server', oldPosition, newPosition, player)
+    io.sockets.in("room-"+roomId).emit('piece-movement-server', oldPosition, newPosition, player, isEx)
   })
   socket.on('ex-press', (roomId, player, isOn) => {
     io.sockets.in("room-"+roomId).emit('ex-press-server', isOn, player)
+  })
+
+  socket.on('ex-spend-meter', (roomId, player, ammount) => {
+    io.sockets.in("room-"+roomId).emit('ex-spend-meter-server', player, ammount)
   })
 });
 
