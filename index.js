@@ -54,6 +54,10 @@ io.on('connection', (socket) => {
   socket.on('ex-spend-meter', (roomId, player, ammount) => {
     io.sockets.in("room-"+roomId).emit('ex-spend-meter-server', player, ammount)
   })
+
+  socket.on('kill', (roomId, player, killablePiecePosition) => {
+    io.sockets.in("room-"+roomId).emit('kill-piece-from-server', player, killablePiecePosition)
+  })
 });
 
 server.listen(8080, () => {
