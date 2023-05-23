@@ -58,6 +58,14 @@ io.on('connection', (socket) => {
   socket.on('kill', (roomId, player, killablePiecePosition) => {
     io.sockets.in("room-"+roomId).emit('kill-piece-from-server', player, killablePiecePosition)
   })
+
+  socket.on('specific-ex-move', (roomId, player, blockingPiecePosition, piece) => {
+    io.sockets.in("room-"+roomId).emit('ex-move-from-server', player, blockingPiecePosition, piece)
+  })
+
+  socket.on('queen-ex-move', (roomId, player, kingPosition, queenPosition) => {
+    io.sockets.in("room-"+roomId).emit('queen-ex-move-from-server', player, kingPosition, queenPosition)
+  })
 });
 
 server.listen(8080, () => {
