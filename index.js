@@ -33,10 +33,16 @@ const io = new Server(server, {
 io.on('connection', (socket) => {
   console.log(`User connected ${socket.id}`);
   socket.on('join-room', (id, userId) => {
-    if(userIds.length < 2) {
-      userIds.push(socket.id)
+    if(userIds[id] == null)
+      userIds[id] = []
+    if(userIds[id].length < 2) {
+      userIds[id].push(socket.id)
+      console.log(userIds)
       socket.join("room-"+id);
       io.sockets.in("room-"+id).emit('connected', id, socket.id);
+      if(userIds[id].length === 2) {
+        io.sockets.in("room-"+id).emit('player2-ready');
+      }
     } 
     else {
       io.to(socket.id).emit('full-room');
@@ -74,6 +80,10 @@ io.on('connection', (socket) => {
 
   socket.on('king-state', (roomId, player, checkmate) => {
     io.sockets.in("room-"+roomId).emit('king-state-animation', player, checkmate)
+  })
+
+  socket.on('game-over', (roomId) => {
+    
   })
 });
 
