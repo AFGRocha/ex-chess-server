@@ -12,16 +12,6 @@ app.use(function(req, res, next) {
   next();
 });
 
-app.get('/', (req,res) => {
-  console.log('root')
-  res.send(`/${uuidV4()}`)
-})
-
-app.get('/:room', (req, res) => {
-  console.log('room')
-  res.send(`Room ID: ${req.params.room}`)
-})
-
 let userIds = []
 const io = new Server(server, {
   cors: {
@@ -37,7 +27,6 @@ io.on('connection', (socket) => {
       userIds[id] = []
     if(userIds[id].length < 2) {
       userIds[id].push(socket.id)
-      console.log(userIds)
       socket.join("room-"+id);
       io.sockets.in("room-"+id).emit('connected', id, socket.id);
       if(userIds[id].length === 2) {
@@ -51,11 +40,12 @@ io.on('connection', (socket) => {
   })
   socket.on('disconnect', () => {
     console.log(`A user has disconnected ${socket.id}`);
+    const index = Object.keys(userIds).find(key => userIds[key].includes(socket.id));
+    delete userIds[index]
+    io.sockets.in("room-"+index).emit('player-disconnected')
   })
   socket.on('piece-movement', (oldPosition, newPosition, roomId, player, isEx) => {
-    console.log(player)
     let index  = ((player === 'player1') ? 1 : 0);
-    console.log(player+' is sending to  ' + userIds[index])
     io.sockets.in("room-"+roomId).emit('piece-movement-server', oldPosition, newPosition, player, isEx)
   })
   socket.on('ex-press', (roomId, player, isOn) => {
